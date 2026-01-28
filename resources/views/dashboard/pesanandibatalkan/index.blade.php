@@ -1,0 +1,112 @@
+@extends('dashboard.layout.index')
+
+@section('container')
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-6">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="row card-header py-3 justify-content-between">
+                                <div class="col-6">
+                                    <h5 class="m-0 font-weight-bold text-primary">Pesanan Batal</h5>
+                                </div>
+                            </div>
+                            <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0"
+                                role="grid" aria-describedby="dataTable_info" style="width: 100%;">
+                                <thead>
+                                    <tr role="row">
+                                        <th style="width: 20px;">No
+                                        </th>
+                                        <th class="text-center">No.Pesanan</th>
+                                        <th class="text-center">Penerima</th>
+                                        <th class="text-center">Alamat</th>
+                                        <th class="text-center">No.Invoice</th>
+                                        <th class="text-center">Total Harga</th>
+
+                                        <th class="text-center" style="width: 62px;">Action </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($pembayaran as $i => $value)
+                                        <tr>
+                                            <td>{{ $pembayaran->firstItem() + $i }}</td>
+
+                                            <td>{{ $value->no_pemesanan }}</td>
+                                            <td>{{ $value->pengiriman->nama_penerima }}</td>
+                                            <td>{{ $value->pengiriman->alamat }}</td>
+                                            <td>{{ $value->no_invoice }}</td>
+                                            <td>Rp.{{ number_format($value->harga, 0, ',', '.') }}</td>
+                                            {{-- <div class="d-flex">
+                                                <a href="{{ url('/dashboard/kategori/'.$ktgr->id.'/edit') }}" class="btn btn-info me-2">
+                                                    Edit
+                                                </a>
+                                             <form method="POST" action="{{ url('/dashboard/kategori/'.$ktgr->id) }}">
+                                                    @method('DELETE')
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-danger">
+                                                        Hapus
+                                                    </button>
+                                                </form>
+                                            </div> --}}
+                                            <td>
+                                                <div class="d-flex">
+                                                    <!-- Button trigger modal -->
+                                                    <button type="button" class="btn btn-success me-2"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#exampleModal-{{ $value->id }}">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+
+                                                    {{-- <a href="/dashboard/invoice/cetak_pdf/{{ $value->id }}" class="btn btn-danger me-2"><i class="fas fa-file-alt"></i> </a> --}}
+                                                    <form
+                                                        action="{{ url('/dashboard/pesanandibatalkan/' . $value->id . '/updat') }}"
+                                                        method="POST" class="d-flex">
+
+                                                        @csrf
+
+                                                        <input type="hidden" name="status" value="pesananbatal">
+
+                                                    </Form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        {{ $pembayaran->links() }}
+                    </div>
+                    @foreach ($pembayaran as $item)
+                        <div class="modal fade" id="exampleModal-{{ $item->id }}" tabindex="-1"
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Detail Pesanan</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body p-0">
+                                        @include('dashboard.partials.invoice_modal_content', [
+                                            'item' => $item,
+                                        ])
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Close</button>
+                                        {{-- <button type="button" class="btn btn-primary">Save changes</button> --}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+@endsection
