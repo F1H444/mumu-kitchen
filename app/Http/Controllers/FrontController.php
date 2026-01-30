@@ -14,8 +14,8 @@ class FrontController extends Controller
     {
 
         $kategori = Kategori::get();
-        $produk = Produk::with(['kategori', 'ukuran'])->paginate(4);
-        $produkk = Produk::with(['kategori', 'ukuran'])->take(8)->get();
+        $produk = Produk::with(['kategori'])->paginate(4);
+        $produkk = Produk::with(['kategori'])->take(8)->get();
 
         return view('front.index', [
             'produk' => $produk,

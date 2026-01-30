@@ -274,35 +274,14 @@
                                 @csrf
                                 <input type="hidden" name="produk_id" value="{{ $produks->id }}">
 
-                                <!-- Size Selection -->
-                                @if ($produks->ukuran->count() > 0)
-                                    <div class="mb-4">
-                                        <span class="form-label">Pilih Ukuran & Stok:</span>
-                                        <div class="size-selector">
-                                            @foreach ($produks->ukuran as $ukuran)
-                                                <div class="size-option" onclick="changeStock({{ $ukuran->pivot->stock }})">
-                                                    <input type="radio" name="ukuran_produk_id"
-                                                        id="ukuran-{{ $ukuran->pivot->id }}"
-                                                        value="{{ $ukuran->pivot->id }}" required>
-                                                    <label for="ukuran-{{ $ukuran->pivot->id }}">
-                                                        {{ $ukuran->jenis_ukuran }}
-                                                        <span class="small opacity-75">({{ $ukuran->pivot->stock }})</span>
-                                                    </label>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                @endif
 
                                 <!-- Quantity -->
-                                <div class="mb-4" id="quantity-section"
-                                    style="display: {{ $produks->ukuran->count() > 0 ? 'none' : 'block' }}">
+                                <div class="mb-4" id="quantity-section">
                                     <span class="form-label">Jumlah Pesanan:</span>
                                     <div class="quantity-selector">
                                         <button type="button" class="quantity-btn" onclick="updateQty(-1)">-</button>
                                         <input type="number" class="quantity-input" name="kuantitas" id="kuantitas"
-                                            value="1" min="1"
-                                            max="{{ $produks->ukuran->count() > 0 ? 0 : $produks->stok }}">
+                                            value="1" min="1" max="{{ $produks->stok }}">
                                         <button type="button" class="quantity-btn" onclick="updateQty(1)">+</button>
                                     </div>
                                 </div>

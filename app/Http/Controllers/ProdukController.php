@@ -47,26 +47,4 @@ class ProdukController extends Controller
 
         ]);
     }
-
-    public function getSizes($id)
-    {
-        $produk = Produk::with('ukuran')->find($id);
-
-        if (!$produk) {
-            return response()->json(['error' => 'Product not found'], 404);
-        }
-
-        // Get all sizes with stock information
-        $sizes = $produk->ukuran->map(function ($ukuran) {
-            return [
-                'id' => $ukuran->pivot->id,
-                'ukuran' => [
-                    'jenis_ukuran' => $ukuran->jenis_ukuran
-                ],
-                'stock' => $ukuran->pivot->stock
-            ];
-        });
-
-        return response()->json($sizes);
-    }
 }

@@ -10,17 +10,12 @@ use Illuminate\Database\Eloquent\Model;
 class Keranjang extends Model
 {
     use Uuid;
-    protected $fillable = ['produk_id', 'user_id', 'kuantitas', 'ukuran_produk_id'];
+    protected $fillable = ['produk_id', 'user_id', 'kuantitas'];
     protected $appends = ['subtotal'];
 
     public function produk()
     {
         return $this->belongsTo(Produk::class);
-    }
-
-    public function ukuran()
-    {
-        return $this->belongsTo(UkuranProduk::class, 'ukuran_produk_id');
     }
 
     public function user()

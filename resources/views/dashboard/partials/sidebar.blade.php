@@ -17,7 +17,6 @@
                 <nav class="sb-sidenav-menu-nested nav">
                     <a class="nav-link" href={{ '/dashboard/produk' }}>Produk</a>
                     <a class="nav-link" href={{ '/dashboard/kategori' }}>Kategori</a>
-                    <a class="nav-link" href={{ '/dashboard/ukuran ' }}>Ukuran</a>
                     {{-- <a class="nav-link" href={{ '/dashboard/bank' }}>Bank</a> --}}
                 </nav>
             </div>

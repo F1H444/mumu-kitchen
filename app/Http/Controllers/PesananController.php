@@ -10,7 +10,6 @@ use App\Models\Kategori;
 use App\Models\Pembayaran;
 use App\Models\Pengiriman;
 use App\Models\Pesanan;
-use App\Models\UkuranProduk;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -42,7 +41,7 @@ class PesananController extends Controller
     {
         // dd($request->all());
         $kategori = kategori::all();
-        $keranjang = Keranjang::with(['produk', 'ukuran.Ukuran'])->where('user_id', auth()->user()->id)->get();
+        $keranjang = Keranjang::with(['produk'])->where('user_id', auth()->user()->id)->get();
         $alamat = Alamat::where('id', $request->alamat_id)->first();
 
         $total_pembayaran = 0;
@@ -77,110 +76,50 @@ class PesananController extends Controller
     {
         $data = $request->validate([
             'alamat_id' => 'required',
-            'courier' => 'required|in:jne,tiki,pos'
+            'courier' => 'required|in:gofood,maxim,grabfood'
         ]);
 
         $alamat = Alamat::find($request->alamat_id);
-        $keranjangs = Keranjang::with(['produk'])->where('user_id', auth()->user()->id)->get();
-        $weight = 0;
-        foreach ($keranjangs as $keranjang) {
-            // Produk katering biasanya ringan (300g per box)
-            $itemWeight = isset($keranjang->produk->berat) ? $keranjang->produk->berat : 0.3;
-            $weight += ($itemWeight * $keranjang->kuantitas);
-        }
 
-        // RajaOngkir minimal weight 1 gram
-        if ($weight <= 0) $weight = 0.1;
+        $costs = [];
+        $courierName = strtoupper($data['courier']);
 
-        $apiKey = env('RAJAONGKIR_API_KEY');
-        if (!$apiKey) {
-            Log::error('RAJAONGKIR_API_KEY is missing in .env');
-            return response()->json(['message' => 'Konfigurasi API Ongkir belum diatur.'], 500);
-        }
-
-        $origin = 444; // Surabaya
-        $destination = $alamat->kota_id;
-
-        Log::info('Checking Ongkir', [
-            'origin' => $origin,
-            'destination' => $destination,
-            'weight' => $weight * 1000,
-            'courier' => $data['courier']
-        ]);
-
-        // Fallback to official RajaOngkir Starter endpoint 
-        $response = Http::asForm()->withHeaders([
-            'key' => $apiKey,
-        ])->post('https://api.rajaongkir.com/starter/cost', [
-            'origin' => $origin,
-            'destination' => $destination,
-            'weight' => $weight * 1000,
-            'courier' => $data['courier']
-        ]);
-
-        if ($response->successful()) {
-            $responseData = $response->json();
-            $costs = [];
-
-            if (isset($responseData['rajaongkir']['results'][0]['costs'])) {
-                foreach ($responseData['rajaongkir']['results'][0]['costs'] as $cost) {
-                    $serviceName = $cost['service'];
-
-                    // Filter: Jangan tampilkan JTR (Trucking) karena terlalu lama untuk makanan
-                    if (str_contains(strtoupper($serviceName), 'JTR') || str_contains(strtoupper($serviceName), 'TRUCKING')) {
-                        continue;
-                    }
-
-                    $etd = (string) $cost['cost'][0]['etd'];
-                    $price = $cost['cost'][0]['value'];
-
-                    // Jika pengiriman sesama Surabaya (Local)
-                    if ($origin == $destination) {
-                        $etd = "1"; // Paksa 1 hari untuk area lokal
-
-                        // Jika harga JNE CTC atau sejenisnya terasa mahal (> 20rb), kita sesuaikan 
-                        // agar lebih masuk akal untuk makanan area lokal
-                        if ($price > 20000) {
-                            $price = 15000;
-                        }
-                    }
-
-                    $costs[] = [
-                        'service' => $serviceName,
-                        'description' => $cost['description'],
-                        'cost' => $price,
-                        'etd' => $etd
-                    ];
-                }
-
-                // Tambahkan Layanan Khusus Mumu Express jika sesama Surabaya
-                if ($origin == $destination) {
-                    array_unshift($costs, [
-                        'service' => 'Mumu Express',
-                        'description' => 'Kurir Internal Mumu Kitchen',
-                        'cost' => 10000,
-                        'etd' => '1'
-                    ]);
-                }
-
-                return response()->json($costs);
-            }
-        }
-
-        // Jika API gagal, berikan fallback harga lokal yang masuk akal
-        if ($origin == $destination) {
-            return response()->json([[
-                'service' => 'Mumu Express',
-                'description' => 'Pengiriman Lokal Surabaya',
+        if ($data['courier'] == 'gofood') {
+            $costs[] = [
+                'service' => 'GoFood Instant',
+                'description' => 'Pengiriman instan via GoFood',
+                'cost' => 15000,
+                'etd' => '1'
+            ];
+        } elseif ($data['courier'] == 'grabfood') {
+            $costs[] = [
+                'service' => 'GrabFood Instant',
+                'description' => 'Pengiriman instan via GrabFood',
+                'cost' => 15000,
+                'etd' => '1'
+            ];
+        } elseif ($data['courier'] == 'maxim') {
+            $costs[] = [
+                'service' => 'Maxim Delivery',
+                'description' => 'Pengiriman instan via Maxim',
                 'cost' => 10000,
                 'etd' => '1'
-            ]]);
+            ];
         }
 
+        // Tambahkan Layanan Khusus Mumu Express jika sesama Surabaya (Origin: 444)
+        if ($alamat->kota_id == 444) {
+            array_unshift($costs, [
+                'service' => 'Mumu Express',
+                'description' => 'Kurir Internal Mumu Kitchen',
+                'cost' => 10000,
+                'etd' => '1'
+            ]);
+        }
 
-        Log::error('Ongkir API Error', ['body' => $response->body(), 'status' => $response->status()]);
-        return response()->json(['message' => 'Gagal mengambil data ongkir: ' . $response->body()], 500);
+        return response()->json($costs);
     }
+
 
     public function show(Pesanan $pesanan)
     {
@@ -219,19 +158,9 @@ class PesananController extends Controller
                 'kuantitas' => $item->kuantitas,
                 'sub_total' => $item->produk->harga * $item->kuantitas,
                 'produk_id' => $item->produk->id,
-                'ukuran_produk_id' => $item->ukuran_produk_id,
             ]);
 
-            if ($item->ukuran_produk_id) {
-                $UkuranProduk = UkuranProduk::where('id', $item->ukuran_produk_id)->first();
-                if ($UkuranProduk) {
-                    $UkuranProduk->update([
-                        'stock' => $UkuranProduk->stock - $item->kuantitas
-                    ]);
-                }
-            } else {
-                $item->produk->decrement('stok', $item->kuantitas);
-            }
+            $item->produk->decrement('stok', $item->kuantitas);
 
             $harga += $pesanan->sub_total;
         }

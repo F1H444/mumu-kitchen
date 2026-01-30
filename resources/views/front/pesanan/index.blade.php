@@ -200,8 +200,7 @@
                                 <div class="summary-list-item d-flex justify-content-between align-items-center">
                                     <div>
                                         <h6 class="my-0 text-white">{{ $value->produk->nama_produk }}</h6>
-                                        <small class="text-muted">x{{ $value->kuantitas }} |
-                                            {{ $value->ukuran ? $value->ukuran->ukuran->jenis_ukuran : 'Default Size' }}</small>
+                                        <small class="text-muted">x{{ $value->kuantitas }}</small>
                                     </div>
                                     <span class="text-white small">Rp
                                         {{ number_format($value->subtotal, 0, ',', '.') }}</span>
@@ -265,31 +264,31 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <label class="address-option">
-                                        <input type="radio" name="courier" value="jne" id="jne"
+                                        <input type="radio" name="courier" value="gofood" id="gofood"
                                             class="pilih-pengiriman d-none" required>
                                         <div class="address-card text-center py-4">
-                                            <i class="fas fa-box fa-2x mb-3"></i>
-                                            <div class="font-weight-bold">JNE</div>
+                                            <i class="fas fa-motorcycle fa-2x mb-3 text-success"></i>
+                                            <div class="font-weight-bold">GoFood</div>
                                         </div>
                                     </label>
                                 </div>
                                 <div class="col-md-4">
                                     <label class="address-option">
-                                        <input type="radio" name="courier" value="pos" id="pos"
+                                        <input type="radio" name="courier" value="grabfood" id="grabfood"
                                             class="pilih-pengiriman d-none">
                                         <div class="address-card text-center py-4">
-                                            <i class="fas fa-mail-bulk fa-2x mb-3"></i>
-                                            <div class="font-weight-bold">POS INDO</div>
+                                            <i class="fas fa-motorcycle fa-2x mb-3 text-success"></i>
+                                            <div class="font-weight-bold">GrabFood</div>
                                         </div>
                                     </label>
                                 </div>
                                 <div class="col-md-4">
                                     <label class="address-option">
-                                        <input type="radio" name="courier" value="tiki" id="tiki"
+                                        <input type="radio" name="courier" value="maxim" id="maxim"
                                             class="pilih-pengiriman d-none">
                                         <div class="address-card text-center py-4">
-                                            <i class="fas fa-shipping-fast fa-2x mb-3"></i>
-                                            <div class="font-weight-bold">TIKI</div>
+                                            <i class="fas fa-motorcycle fa-2x mb-3 text-warning"></i>
+                                            <div class="font-weight-bold">Maxim</div>
                                         </div>
                                     </label>
                                 </div>

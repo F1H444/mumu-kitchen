@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Keranjang;
-use App\Models\Ukuran;
 use App\Models\Kategori;
-use App\Models\UkuranProduk;
 
 class KeranjangController extends Controller
 {
@@ -27,34 +25,20 @@ class KeranjangController extends Controller
 
     public function store(Request $request)
     {
-        // Convert empty string to null for ukuran_produk_id
-        if ($request->ukuran_produk_id === '' || $request->ukuran_produk_id === 'null') {
-            $request->merge(['ukuran_produk_id' => null]);
-        }
 
         // dd($request->all());
         $validatedData = $request->validate([
             'produk_id' => 'required',
-            'ukuran_produk_id' => 'nullable', // Changed from required to nullable
             'kuantitas' => 'required'
         ]);
 
 
-        if ($cek = Keranjang::where('produk_id', $request->produk_id)->where('ukuran_produk_id', $request->ukuran_produk_id)->where('user_id', auth()->user()->id)->first()) {
+        if ($cek = Keranjang::where('produk_id', $request->produk_id)->where('user_id', auth()->user()->id)->first()) {
             $kuantitas = $cek->kuantitas + $validatedData['kuantitas'];
 
-            // Check stock based on size existence
-            if ($request->ukuran_produk_id) {
-                $ukuranproduk = UkuranProduk::find($request->ukuran_produk_id);
-                if ($kuantitas > $ukuranproduk->stock) {
-                    $kuantitas = $ukuranproduk->stock;
-                }
-            } else {
-                // If no size, check main product stock
-                $produk = \App\Models\Produk::find($request->produk_id);
-                if ($kuantitas > $produk->stok) {
-                    $kuantitas = $produk->stok;
-                }
+            $produk = \App\Models\Produk::find($request->produk_id);
+            if ($kuantitas > $produk->stok) {
+                $kuantitas = $produk->stok;
             }
 
             $cek->update([

@@ -101,7 +101,7 @@
                                 <div>
                                     <div class="fw-bold small">{{ $psn->produk->nama_produk }}</div>
                                     <div class="text-muted" style="font-size: 0.75rem;">
-                                        {{ $psn->ukuran ? $psn->ukuran->ukuran->jenis_ukuran : 'Porsi Standar' }}</div>
+                                        Porsi Standar</div>
                                 </div>
                             </div>
                         </td>

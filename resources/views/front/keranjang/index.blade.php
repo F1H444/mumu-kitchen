@@ -223,10 +223,6 @@
                                     @endphp
                                     <img src="{{ asset($imagePath) }}" class="product-img-cart mr-3" alt="Product">
                                     <div>
-                                        @if ($keranjang->ukuran)
-                                            <div class="product-meta-cart">{{ $keranjang->ukuran->ukuran->jenis_ukuran }}
-                                            </div>
-                                        @endif
                                         <h3 class="product-name-cart">{{ $keranjang->produk->nama_produk }}</h3>
                                         <div class="text-muted small">Rp
                                             {{ number_format($keranjang->produk->harga, 0, ',', '.') }}</div>
@@ -239,8 +235,7 @@
                                                 class="fas fa-minus"></i></button>
                                         <input type="number" min="1" class="input-text kuantitas" name="kuantitas"
                                             id="qty-{{ $keranjang->id }}" data-id="{{ $keranjang->id }}"
-                                            value="{{ $keranjang->kuantitas }}"
-                                            max="{{ $keranjang->ukuran ? $keranjang->ukuran->stock : $keranjang->produk->stok }}"
+                                            value="{{ $keranjang->kuantitas }}" max="{{ $keranjang->produk->stok }}"
                                             readonly>
                                         <button class="btn-qty btn-plus" data-id="{{ $keranjang->id }}"><i
                                                 class="fas fa-plus"></i></button>

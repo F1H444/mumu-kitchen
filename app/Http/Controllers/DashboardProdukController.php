@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kategori;
-use App\Models\Ukuran;
 use Illuminate\Http\Request;
 use App\Models\Produk;
-use App\Models\UkuranProduk;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -16,13 +14,10 @@ class DashboardProdukController extends Controller
     {
         $produks = Produk::latest()->paginate(3);
         $kategori = Kategori::get();
-        $ukuran = Ukuran::get();
 
         return view('dashboard.produk.index', [
             'produks' => $produks,
-            'kategori' => $kategori,
-            'ukurans' => $ukuran
-
+            'kategori' => $kategori
         ]);
     }
 
@@ -30,11 +25,9 @@ class DashboardProdukController extends Controller
     {
         $tambah = Produk::all();
         $kategori = Kategori::all();
-        $ukuran = Ukuran::all();
         return view('dashboard.produk.create', compact(
             'tambah',
-            'kategori',
-            'ukuran'
+            'kategori'
         ));
     }
 
@@ -54,28 +47,18 @@ class DashboardProdukController extends Controller
         }
 
         Produk::create($validatedData);
-        // foreach ($request->ukuran as $index => $ukuran) {
-        //     UkuranProduk::create([
-        //         'produk_id' => $produkss->id,
-        //         'ukuran_id' => $ukuran
-        //     ]);
-        // }
 
         return redirect('dashboard/produk')->with('successcreate', 'Create Successfull!');
     }
 
     public function edit($id)
     {
-
         $produk = Produk::find($id);
         $kategori = Kategori::all();
-        $ukuran = Ukuran::all();
 
         return view('dashboard.produk.edit', compact(
             'produk',
-            'kategori',
-            'ukuran'
-
+            'kategori'
         ));
     }
     public function update(Request $request, $id)
@@ -99,15 +82,6 @@ class DashboardProdukController extends Controller
 
         Produk::where('id', $id)->update($validatedData);
 
-        // UkuranProduk::where('produk_id', $id)->delete();
-
-        // foreach ($request->ukuran as $index => $ukuran) {
-        //     UkuranProduk::create([
-        //         'produk_id' => $id,
-        //         'ukuran_id' => $ukuran
-        //     ]);
-        // }
-
 
         return redirect('dashboard/produk')->with('successupdate', 'Update Successfull!');
     }
@@ -116,10 +90,6 @@ class DashboardProdukController extends Controller
     {
         try {
             $produk = Produk::findOrFail($id);
-
-            // Detach related sizes (removes rows from ukuran_produks)
-            // This is necessary because of the RESTRICT constraint in the database
-            $produk->ukuran()->detach();
 
             if ($produk->gambar) {
                 Storage::disk('public')->delete($produk->gambar);

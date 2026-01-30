@@ -97,11 +97,6 @@
                                     </td>
                                     <td>
                                         <div class="d-flex justify-content-center gap-2">
-                                            <a href="{{ url('dashboard/produk/' . $produk->id . '/ukurans') }}"
-                                                class="btn btn-sm btn-outline-primary border-0 shadow-none"
-                                                title="Kelola Stok/Ukuran">
-                                                <i class="fas fa-boxes"></i>
-                                            </a>
                                             <a href="{{ url('/dashboard/produk/' . $produk->id . '/edit') }}"
                                                 class="btn btn-sm btn-outline-info border-0 shadow-none"
                                                 title="Edit Produk">

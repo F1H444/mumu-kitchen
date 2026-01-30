@@ -133,7 +133,6 @@
                                             {{ number_format($item->subtotal, 0, ',', '.') }}</span>
                                     </div>
                                     <small class="text-muted d-block">
-                                        {{ $item->ukuran ? $item->ukuran->ukuran->jenis_ukuran : 'Default' }} |
                                         x{{ $item->kuantitas }}
                                     </small>
                                 </div>

@@ -13,8 +13,6 @@ use App\Http\Controllers\DashboardProvinsiController;
 use App\Http\Controllers\DashboardKotaController;
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\KategoriProdukController;
-use App\Http\Controllers\DashboardUkuranController;
-use App\Http\Controllers\UkuranProdukController;
 use App\Http\Controllers\PesananController;
 use App\Http\Controllers\AlamatController;
 use App\Http\Controllers\PesananAdminController;
@@ -102,8 +100,6 @@ Route::get('/riwayat/laporanpdf/{id}', [LaporanUserController::class, 'laporanpd
 
 Route::post('payments/midtrans-notification', [PaymentCallbackController::class, 'receive']);
 
-// API for getting product sizes
-Route::get('/api/produk/{id}/ukuran', [ProdukController::class, 'getSizes']);
 
 
 // Dashboard
@@ -113,13 +109,10 @@ Route::prefix('dashboard')->middleware(['auth', 'admin'])->group(function () {
     Route::post('kategori/{id}/edit', [DashboardKategoriController::class, 'update']);
     Route::resource('produk', DashboardProdukController::class);
     Route::post('produk/{id}/edit', [DashboardProdukController::class, 'update']);
-    Route::resource('produk/{produk_id}/ukurans', UkuranProdukController::class);
     Route::resource('provinsi', DashboardProvinsiController::class);
     Route::post('provinsi/{id}/edit', [DashboardProvinsiController::class, 'update']);
     Route::resource('kota', DashboardKotaController::class);
     Route::post('kota/{id}/edit', [DashboardKotaController::class, 'update']);
-    Route::resource('ukuran', DashboardUkuranController::class);
-    Route::post('ukuran/{id}/edit', [DashboardUkuranController::class, 'update']);
 
     Route::get('/pesananbaru', [PesananAdminController::class, 'pesananbaru'])->middleware('admin');
     Route::post('/pesananbaru', [PesananAdminController::class, 'pesananbaru'])->middleware('admin');

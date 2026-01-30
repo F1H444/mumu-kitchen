@@ -463,30 +463,15 @@
                                             </div>
                                         </div>
                                         <div class="d-flex justify-content-end align-items-center gap-2 mt-3">
-                                            @php
-                                                $hasSizes = $item->ukuran->count() > 0;
-                                                $totalStock = $hasSizes
-                                                    ? $item->ukuran->sum('pivot.stock')
-                                                    : $item->stok;
-
-                                                // If has sizes, we need at least one available size to buy
-                                                $firstAvailable = $hasSizes
-                                                    ? $item->ukuran->where('pivot.stock', '>', 0)->first()
-                                                    : null;
-                                                $canBuy = $hasSizes
-                                                    ? $totalStock > 0 && $firstAvailable
-                                                    : $totalStock > 0;
-                                            @endphp
-
-                                            @if ($canBuy)
+                                            @if ($item->stok > 0)
                                                 <div class="action-group">
                                                     <button class="btn-qty-sm" onclick="updateCardQty(this, -1)">-</button>
                                                     <input type="number" class="input-qty-sm" value="1" min="1"
-                                                        max="{{ $hasSizes ? $firstAvailable->pivot->stock : $totalStock }}">
+                                                        max="{{ $item->stok }}">
                                                     <button class="btn-qty-sm" onclick="updateCardQty(this, 1)">+</button>
                                                     <div class="divider-vertical"></div>
                                                     <button class="btn-action-icon"
-                                                        onclick="instantAddToCart(this, '{{ $item->id }}', '{{ $hasSizes ? $firstAvailable->pivot->id : '' }}', '{{ $item->nama_produk }}')">
+                                                        onclick="instantAddToCart(this, '{{ $item->id }}', '', '{{ $item->nama_produk }}')">
                                                         <i class="fas fa-shopping-cart" style="font-size: 0.9rem;"></i>
                                                     </button>
                                                 </div>

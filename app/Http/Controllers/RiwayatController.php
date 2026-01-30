@@ -42,14 +42,7 @@ class RiwayatController extends Controller
         $pembayaran = Pembayaran::find($id);
 
         foreach ($pembayaran->Pesanan as $psn) {
-            if ($psn->ukuran_produk_id) {
-                $pv = UkuranProduk::find($psn->ukuran_produk_id);
-                if ($pv) {
-                    $pv->update(['stock' => $pv->stock + $psn->kuantitas]);
-                }
-            } else {
-                $psn->produk->increment('stok', $psn->kuantitas);
-            }
+            $psn->produk->increment('stok', $psn->kuantitas);
         }
 
         $pembayaran->update(['status' => $request->status, 'payment_status' => $request->payment_status]);

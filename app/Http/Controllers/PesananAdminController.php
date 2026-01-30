@@ -112,7 +112,7 @@ class PesananAdminController extends Controller
 
     public function showpesanandikirim(Request $request)
     {
-        $pembayaran = Pembayaran::with(['Pengiriman', 'Pesanan.Produk.ProdukVariasi'])->paginate(4);
+        $pembayaran = Pembayaran::with(['Pengiriman', 'Pesanan.Produk'])->paginate(4);
         $no_resi = $request->no_resi;
 
         return view('dashboard.pesanan.pesanandikirim', compact(

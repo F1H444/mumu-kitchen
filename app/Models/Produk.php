@@ -10,7 +10,7 @@ class Produk extends Model
 {
     use Uuid;
     use HasFactory;
-    protected $fillable = ['nama_produk', 'gambar', 'deskripsi', 'harga', 'stok', 'kategori_id', 'ukuran_id'];
+    protected $fillable = ['nama_produk', 'gambar', 'deskripsi', 'harga', 'stok', 'kategori_id'];
     protected $appends = ['terjual'];
 
     public function Kategori()
@@ -18,24 +18,9 @@ class Produk extends Model
         return $this->belongsTo('App\Models\kategori', 'kategori_id');
     }
 
-    public function ukuran()
-    {
-        return $this->belongsToMany('App\Models\Ukuran', 'ukuran_produks')->withPivot(['stock', 'id']);
-    }
-
     public function pesanan()
     {
         return $this->hasMany('App\Models\Pesanan');
-    }
-
-
-    public function getStockAttribute()
-    {
-        $stock = 0;
-        foreach ($this->ukuran as $ukuran) {
-            $stock += $ukuran->pivot->stock;
-        }
-        return $stock;
     }
 
     public function getTerjualAttribute()
